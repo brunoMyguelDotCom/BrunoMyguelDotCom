@@ -11,7 +11,7 @@
 
 <div align="center">
   <!-- Assembly (Logo branca) -->
-  <img src="https://www.svgrepo.com/show/373445/assembly.svg" height="40" alt="assembly logo" />
+  <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="40" alt="assembly logo" />
   <img width="20" />
   <!-- C -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="40" alt="c logo" />
@@ -29,6 +29,6 @@
   <!-- Linux -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="40" alt="linux logo" />
   <img width="20" />
-  <!-- Apple (Logo branca real) -->
+  <!-- Apple -->
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple logo white" />
 </div>

@@ -29,6 +29,6 @@
   <!-- Linux -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="40" alt="linux logo" />
   <img width="20" />
-  <!-- Apple (Logo branca) -->
-  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" height="40" alt="apple logo white" />
+  <!-- Apple (Logo branca real) -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple logo white" />
 </div>

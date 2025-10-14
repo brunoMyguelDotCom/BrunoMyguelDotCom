@@ -1,4 +1,4 @@
-<h3 align="center">Olá, me chamo Bruno Myguel.<br>Aprofundando conhecimentos em desenvolvimento de sistemas de baixo e alto nível.</h3>
+<h2 align="center">Olá, me chamo Bruno Myguel.<br>Aprofundando conhecimentos em desenvolvimento de sistemas de baixo e alto nível.</h2>
 
 <h3 align="center">Entre o hardware e o software, tentando entender os dois...</h3>
 

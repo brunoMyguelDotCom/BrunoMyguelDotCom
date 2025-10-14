@@ -1,6 +1,6 @@
 <h3 align="center">Olá, me chamo Bruno Myguel.<br>Aprofundando meus conhecimentos em desenvolvimento de sistemas de baixo e alto nível.</h3>
 
-<h4 align="center">Entre o hardware e o software, tentando entender os dois...</h4>
+<h3 align="center">Entre o hardware e o software, tentando entender os dois...</h3>
 
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=brunoMyguelDotCom&hide_title=true&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=tokyonight&locale=en&hide_border=true" height="150" alt="stats graph" /> <br>
@@ -8,6 +8,8 @@
 </div>
 
 <br>
+
+<h3 align="center">Áreas de Conhecimento:</h3>
 
 <div align="center">
   <!-- Assembly (Logo branca) -->
@@ -32,3 +34,4 @@
   <!-- Apple -->
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple logo white" />
 </div>
+

@@ -15,8 +15,8 @@
   <!-- Assembly (Logo branca) -->
   <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="40" alt="assembly logo" />
   <img width="20" />
-  <!-- C -->
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="40" alt="c logo" />
+  <!-- C (Logo estilizado branco) -->
+  <img src="https://img.icons8.com/?size=100&id=40670&format=png&color=ffffff" height="40" alt="c programming logo" />
   <img width="20" />
   <!-- Java -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java logo" />
@@ -34,4 +34,3 @@
   <!-- Apple -->
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple logo white" />
 </div>
-

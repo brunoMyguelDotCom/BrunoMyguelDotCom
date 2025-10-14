@@ -15,7 +15,7 @@
 
 <div align="left">
   <!-- Assembly -->
-  <img src="https://www.svgrepo.com/show/374035/asm.svg" height="30" alt="assembly logo" />
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/assemblyscript.svg" height="30" alt="assembly logo" />
   <img width="12" />
   <!-- C -->
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" height="30" alt="c logo" />
@@ -33,11 +33,5 @@
   <img width="12" />
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg" height="30" alt="apple logo"  />
 </div>
-
-###
-
-<br clear="both">
-
-<img src="https://raw.githubusercontent.com/brunoMyguelDotCom/brunoMyguelDotCom/output/snake.svg" alt="Snake animation" />
 
 ###

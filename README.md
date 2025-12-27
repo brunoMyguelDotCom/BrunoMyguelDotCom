@@ -1,1 +1,31 @@
-<h2 align="center">Olá, me chamo Bruno Myguel.<br>Aprofundando conhecimentos em desenvolvimento de sistemas de baixo e alto nível.</h2> <h3 align="center">Entre o hardware e o software, tentando entender os dois...</h3> <div align="center"> <img src="https://github-readme-stats.vercel.app/api?username=brunoMyguelDotCom&hide_title=true&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=tokyonight&locale=en&hide_border=true" height="150" alt="stats graph" /> <br> <img src="https://github-readme-stats.vercel.app/api/top-langs?username=brunoMyguelDotCom&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=tokyonight&hide_border=true" height="150" alt="languages graph" /> </div> <br> <h3 align="center">Áreas de Conhecimento:</h3> <div align="center"> <!-- Assembly (Logo branca) --> <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="40" alt="assembly logo" /> <img width="20" /> <!-- C (Logo estilizado branco) --> <img src="https://img.icons8.com/?size=100&id=40670&format=png&color=ffffff" height="40" alt="c programming logo" /> <img width="20" /> <!-- Java --> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java logo" /> </div> <br> <div align="center"> <!-- Windows --> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" height="40" alt="windows logo" /> <img width="20" /> <!-- Linux --> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="40" alt="linux logo" /> <img width="20" /> <!-- Apple --> <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple logo white" /> </div>
+# Olá, me chamo Bruno Myguel.
+### Aprofundando conhecimentos em desenvolvimento de sistemas de baixo e alto nível.
+*Onde o código toca o metal.*
+
+---
+
+## Dashboard de Atividades
+<p align="left">
+  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=brunoMyguelDotCom&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true" />
+  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=brunoMyguelDotCom&layout=compact&theme=tokyonight&hide_border=true&langs_count=6" />
+</p>
+
+## Áreas de Conhecimento
+
+### Linguagens
+<p align="left">
+  <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="40" alt="assembly" />
+  &nbsp;
+  <img src="https://img.icons8.com/?size=100&id=40670&format=png&color=ffffff" height="40" alt="c" />
+  &nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" alt="java" />
+</p>
+
+### Sistemas Operacionais
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" height="40" alt="windows" />
+  &nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="40" alt="linux" />
+  &nbsp;
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" height="40" alt="apple" />
+</p>

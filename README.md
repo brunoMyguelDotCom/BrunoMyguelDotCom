@@ -5,6 +5,8 @@
 
 ---
 
+### Tecnologias
+
 <p align="left">
   <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="35" alt="assembly" />
   &nbsp;&nbsp;

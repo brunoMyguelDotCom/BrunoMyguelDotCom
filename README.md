@@ -31,4 +31,4 @@ Entusiasta de sistemas Unix-like, utilizo **Arch Linux** com **i3wm** para um am
 
 ---
 
-*— onde o código toca o metal.*
+### *— onde o código toca o metal.*

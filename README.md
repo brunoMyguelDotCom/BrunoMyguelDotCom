@@ -1,11 +1,11 @@
 # Olá, me chamo Bruno Myguel.
 ## `ENGENHARIA DE SOFTWARE`
 
-### Perfil Técnico
+### Perfil Técnico:
 Desenvolvedor focado em compreender a fundo como o software interage com o hardware. Com base sólida em linguagens como **Java** e **C**, exploro conceitos de **Assembly** e arquitetura de computadores para criar soluções eficientes e otimizadas.
 
-### Ecossistema
-Entusiasta de sistemas Unix-like, utilizo **Arch Linux** com **i3wm** para um ambiente de desenvolvimento produtivo e minimalista. Experiência em diagnóstico e otimização de hardware, unindo conhecimento físico ao lógico.
+### Ecossistema:
+Entusiasta de sistemas Unix-like, familiaridade em ambiente de desenvolvimento Linux, MacOs e Win com foco em produtividade. Experiência em diagnóstico e otimização de hardware, unindo conhecimento físico ao lógico.
 
 ### Formação
 * **Engenharia de Software** — UniCV

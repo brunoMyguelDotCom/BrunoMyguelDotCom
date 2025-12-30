@@ -1,8 +1,6 @@
 # Olá, me chamo Bruno Myguel.
 ## `ENGENHARIA DE SOFTWARE`
 
----
-
 ### Perfil Técnico
 Desenvolvedor focado em compreender a fundo como o software interage com o hardware. Com base sólida em linguagens como **Java** e **C**, exploro conceitos de **Assembly** e arquitetura de computadores para criar soluções eficientes e otimizadas.
 

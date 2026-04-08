@@ -1,10 +1,14 @@
 # Olá, me chamo Bruno Myguel.
 ## `ENGENHARIA DE SOFTWARE`
-### Perfil Técnico:
-Engenheiro de software com visão que vai do código ao hardware. Especializado no ecossistema **Java/Spring** para o backend e **React/Next.js** com **TypeScript** no frontend, construo sistemas robustos, escaláveis e bem estruturados. A curiosidade pelo funcionamento interno das máquinas me levou ao estudo de **Assembly** e arquitetura de computadores — uma base que molda minha forma de escrever código eficiente e consciente dos recursos.
 
-### Ecossistema:
-Habituado a ambientes Unix-like, desenvolvo com fluência em **Linux**, **macOS** e **Windows**, adaptando ferramentas e fluxos de trabalho para máxima produtividade em cada contexto. Essa versatilidade, combinada com experiência em diagnóstico e otimização de hardware, me permite atuar tanto na camada lógica quanto na física do desenvolvimento.
+### Perfil Técnico
+Engenheiro de software com atuação no desenvolvimento de sistemas backend e frontend, utilizando **Java** com **Spring** na camada de servidor e **React** com **Next.js** e **TypeScript** na interface. Possuo interesse aprofundado em arquitetura de computadores e **Assembly**, o que contribui para uma escrita de código mais consciente em relação ao desempenho e ao uso de recursos.
+
+### Ecossistema
+Trabalho com desenvoltura em ambientes **Linux**, **macOS** e **Windows**, adaptando ferramentas e fluxos conforme a demanda de cada projeto. Tenho familiaridade com sistemas Unix-like e foco em produtividade no ambiente de desenvolvimento.
+
+### Experiência em Hardware
+Ao longo de **8 anos atuando em assistência técnica**, adquiri sólida experiência prática no diagnóstico, manutenção e otimização de hardware. Esse histórico proporciona uma compreensão diferenciada da relação entre software e máquina, tornando mais natural a identificação de gargalos de desempenho, falhas de sistema e comportamentos relacionados à camada física.
 
 ### Formação
 * **Engenharia de Software** — UniCV
@@ -42,4 +46,4 @@ Habituado a ambientes Unix-like, desenvolvo com fluência em **Linux**, **macOS*
 
 ---
 
-### *— onde o código toca o metal.*
+### *onde o código toca o metal.*

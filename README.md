@@ -1,41 +1,72 @@
 # Olá, me chamo Bruno Myguel.
-## `ENGENHARIA DE SOFTWARE`
+
+## `ENGENHARIA DE SOFTWARE & ENGENHARIA DE DADOS`
 
 ### Perfil Técnico
-Engenheiro de software com atuação no desenvolvimento de sistemas backend e frontend, utilizando **Java** com **Spring** na camada de servidor e **React** com **Next.js** e **TypeScript** na interface. Possuo interesse aprofundado em arquitetura de computadores e **Assembly**, o que contribui para uma escrita de código mais consciente em relação ao desempenho e ao uso de recursos.
+
+Estudante de Engenharia de Software e **Estagiário de Engenharia de Dados na Crefaz**, com atuação voltada à construção de soluções para processamento, transformação e análise de dados.
+
+Possuo experiência com desenvolvimento **backend em Java e Spring**, além de atuação com **Python, Pandas e PySpark** na construção de pipelines e processos de dados. Trabalho também com **AWS** e **Terraform**, aplicando conceitos de infraestrutura como código e serviços em nuvem para desenvolvimento e organização de ambientes.
+
+Tenho como principal característica a **resolução de problemas**, buscando compreender a causa dos problemas, analisar diferentes abordagens e construir soluções eficientes, sustentáveis e alinhadas às necessidades do projeto.
 
 ### Ecossistema
-Trabalho com desenvoltura em ambientes **Linux**, **macOS** e **Windows**, adaptando ferramentas e fluxos conforme a demanda de cada projeto. Tenho familiaridade com sistemas Unix-like e foco em produtividade no ambiente de desenvolvimento.
+
+Trabalho com desenvoltura em ambientes **Linux**, **macOS** e **Windows**, adaptando ferramentas e fluxos de trabalho conforme as necessidades de cada projeto.
+
+Possuo familiaridade com sistemas Unix-like e experiência prática na configuração e utilização de ambientes de desenvolvimento, servidores e ferramentas voltadas à engenharia de software e dados.
 
 ### Experiência em Hardware
-Ao longo de **8 anos atuando em assistência técnica**, adquiri sólida experiência prática no diagnóstico, manutenção e otimização de hardware. Esse histórico proporciona uma compreensão diferenciada da relação entre software e máquina, tornando mais natural a identificação de gargalos de desempenho, falhas de sistema e comportamentos relacionados à camada física.
+
+Ao longo de **8 anos atuando em assistência técnica**, adquiri experiência prática no diagnóstico, manutenção e otimização de hardware.
+
+Esse histórico proporciona uma compreensão diferenciada da relação entre software e máquina, contribuindo para uma visão mais ampla na identificação de gargalos de desempenho, falhas de sistema e problemas relacionados à infraestrutura computacional.
 
 ### Formação
+
 * **Engenharia de Software** — UniCV
 * **Desenvolvimento Backend & Sistemas Linux** — Alura
 
 ---
 
-### Tecnologias
+### Backend
+
 <p align="left">
-  <img src="https://img.icons8.com/?size=100&id=gVK745a4Vaur&format=png&color=ffffff" height="35" alt="assembly" />
-  &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="35" alt="java" />
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" height="35" alt="spring" />
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" height="35" alt="postgresql" />
+</p>
+
+---
+
+### Dados
+
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" height="35" alt="python" />
   &nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" height="35" alt="typescript" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" height="35" alt="pandas" />
   &nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="35" alt="react" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache-spark/apache-spark-original.svg" height="35" alt="pyspark" />
+</p>
+
+---
+
+### Infraestrutura
+
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" height="35" alt="aws" />
   &nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" height="35" alt="nextjs" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg" height="35" alt="terraform" />
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="35" alt="docker" />
 </p>
 
 ---
 
 ### Sistemas Operacionais
+
 <p align="left">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="35" alt="linux" />
   &nbsp;&nbsp;
@@ -46,4 +77,4 @@ Ao longo de **8 anos atuando em assistência técnica**, adquiri sólida experi�
 
 ---
 
-### *onde o código toca o metal.*
+### *onde o código encontra os dados e a infraestrutura.*

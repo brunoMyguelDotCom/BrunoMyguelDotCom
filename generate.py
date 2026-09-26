@@ -1,4 +1,4 @@
-import base64
+import json
 import os
 import shutil
 import subprocess
@@ -12,6 +12,7 @@ from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
+STATS_FILE = ASSETS / "stats.json"
 
 USERNAME = os.getenv(
     "GITHUB_USERNAME",
@@ -72,6 +73,16 @@ IGNORE_FOLDERS = {
 }
 
 
+# Valores usados somente quando ainda não existe
+# nenhum valor real salvo anteriormente.
+DEFAULT_STATS = {
+    "repos": 32,
+    "commits": 0,
+    "stars": 0,
+    "lines": 8274,
+}
+
+
 session = requests.Session()
 
 session.headers.update(
@@ -81,10 +92,15 @@ session.headers.update(
     }
 )
 
+
 if TOKEN:
-    session.headers["Authorization"] = f"Bearer {TOKEN}"
+    session.headers["Authorization"] = (
+        f"Bearer {TOKEN}"
+    )
 else:
-    print("AVISO: GITHUB_TOKEN não foi encontrado.")
+    print(
+        "AVISO: GITHUB_TOKEN não foi encontrado."
+    )
 
 
 def github(path):
@@ -95,16 +111,127 @@ def github(path):
 
     if not response.ok:
         print(
-            f"GitHub API error: {response.status_code}"
+            f"GitHub API error: "
+            f"{response.status_code}"
         )
-        print(f"URL: {response.url}")
+
         print(
-            f"Response: {response.text[:1000]}"
+            f"URL: {response.url}"
+        )
+
+        print(
+            f"Response: "
+            f"{response.text[:1000]}"
         )
 
     response.raise_for_status()
 
     return response.json()
+
+
+def load_saved_stats():
+    """
+    Carrega o último conjunto de estatísticas
+    que conseguiu ser obtido com sucesso.
+    """
+
+    if not STATS_FILE.exists():
+        print(
+            "stats.json não existe."
+        )
+
+        return DEFAULT_STATS.copy()
+
+    try:
+        content = STATS_FILE.read_text(
+            encoding="utf-8"
+        )
+
+        saved = json.loads(content)
+
+        stats = {}
+
+        for key, default in DEFAULT_STATS.items():
+            value = saved.get(
+                key,
+                default,
+            )
+
+            if isinstance(value, int):
+                stats[key] = value
+            else:
+                stats[key] = default
+
+        print(
+            "Últimas estatísticas salvas:"
+        )
+
+        print(
+            f"Repositories: "
+            f"{stats['repos']}"
+        )
+
+        print(
+            f"Commits: "
+            f"{stats['commits']}"
+        )
+
+        print(
+            f"Stars: "
+            f"{stats['stars']}"
+        )
+
+        print(
+            f"Lines: "
+            f"{stats['lines']}"
+        )
+
+        return stats
+
+    except (
+        OSError,
+        json.JSONDecodeError,
+        TypeError,
+        ValueError,
+    ) as error:
+
+        print(
+            "Erro ao carregar "
+            "stats.json:"
+        )
+
+        print(error)
+
+        print(
+            "Usando valores padrão."
+        )
+
+        return DEFAULT_STATS.copy()
+
+
+def save_stats(stats):
+    """
+    Salva somente quando uma coleta real
+    foi concluída com sucesso.
+    """
+
+    STATS_FILE.parent.mkdir(
+        exist_ok=True
+    )
+
+    STATS_FILE.write_text(
+        json.dumps(
+            stats,
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    print(
+        "stats.json atualizado."
+    )
 
 
 def get_repositories():
@@ -135,9 +262,12 @@ def count_lines_in_repository(
     temp_root,
 ):
     repo_name = repo["name"]
+
     clone_url = repo["clone_url"]
 
-    repo_path = temp_root / repo_name
+    repo_path = (
+        temp_root / repo_name
+    )
 
     try:
         print(
@@ -162,7 +292,8 @@ def count_lines_in_repository(
 
         if result.returncode != 0:
             print(
-                f"Erro ao clonar {repo_name}: "
+                f"Erro ao clonar "
+                f"{repo_name}: "
                 f"{result.stderr.strip()}"
             )
 
@@ -171,14 +302,19 @@ def count_lines_in_repository(
         total_lines = 0
 
         for path in repo_path.rglob("*"):
+
             if not path.is_file():
                 continue
 
-            relative_path = path.relative_to(
-                repo_path
+            relative_path = (
+                path.relative_to(
+                    repo_path
+                )
             )
 
-            parts = relative_path.parts
+            parts = (
+                relative_path.parts
+            )
 
             if any(
                 folder in IGNORE_FOLDERS
@@ -186,7 +322,10 @@ def count_lines_in_repository(
             ):
                 continue
 
-            if path.suffix.lower() not in CODE_EXTENSIONS:
+            if (
+                path.suffix.lower()
+                not in CODE_EXTENSIONS
+            ):
                 continue
 
             try:
@@ -214,15 +353,16 @@ def count_lines_in_repository(
 
     except subprocess.TimeoutExpired:
         print(
-            f"Timeout ao clonar {repo_name}"
+            f"Timeout ao clonar "
+            f"{repo_name}"
         )
 
         return 0
 
     except Exception as error:
         print(
-            f"Erro ao processar {repo_name}: "
-            f"{error}"
+            f"Erro ao processar "
+            f"{repo_name}: {error}"
         )
 
         return 0
@@ -241,9 +381,11 @@ def count_all_lines(repos):
     with tempfile.TemporaryDirectory(
         prefix="github-stats-"
     ) as temp_dir:
+
         temp_root = Path(temp_dir)
 
         for repo in repos:
+
             total_lines += (
                 count_lines_in_repository(
                     repo,
@@ -255,46 +397,48 @@ def count_all_lines(repos):
 
 
 def get_commit_count():
-    try:
-        response = session.get(
-            "https://api.github.com/search/commits",
-            params={
-                "q": f"author:{USERNAME}",
-                "per_page": 1,
-            },
-            timeout=30,
-        )
+    response = session.get(
+        "https://api.github.com/search/commits",
+        params={
+            "q": f"author:{USERNAME}",
+            "per_page": 1,
+        },
+        timeout=30,
+    )
 
-        if response.ok:
-            return response.json().get(
-                "total_count",
-                0,
-            )
-
+    if not response.ok:
         print(
-            "Erro ao buscar commits: "
-            f"{response.status_code}"
+            "Erro ao buscar commits:"
+            f" {response.status_code}"
         )
 
         print(
             response.text[:1000]
         )
 
-    except requests.RequestException as error:
-        print(
-            f"Erro ao buscar commits: {error}"
-        )
+        response.raise_for_status()
 
-    return "n/a"
+    return response.json().get(
+        "total_count",
+        0,
+    )
 
 
-def get_stats():
+def collect_real_stats():
+    """
+    Faz a coleta completa.
+
+    Se qualquer etapa crítica falhar,
+    a função lança uma exceção para que
+    o programa use os dados anteriores.
+    """
+
     print(
         f"Coletando estatísticas de "
         f"{USERNAME}..."
     )
 
-    user = github(
+    github(
         f"/users/{USERNAME}"
     )
 
@@ -319,16 +463,98 @@ def get_stats():
 
     commits = get_commit_count()
 
-    return {
+    stats = {
         "repos": len(repos),
-        "lines": total_lines,
-        "stars": stars,
         "commits": commits,
+        "stars": stars,
+        "lines": total_lines,
     }
+
+    return stats
+
+
+def get_stats():
+    """
+    Prioridade:
+
+    1. Estatísticas reais atuais.
+    2. Últimas estatísticas salvas.
+    3. Valores padrão.
+
+    O stats.json só é alterado quando
+    a coleta real termina com sucesso.
+    """
+
+    previous_stats = (
+        load_saved_stats()
+    )
+
+    try:
+        real_stats = (
+            collect_real_stats()
+        )
+
+        print(
+            "Estatísticas reais "
+            "coletadas com sucesso."
+        )
+
+        print(
+            f"Repositories: "
+            f"{real_stats['repos']}"
+        )
+
+        print(
+            f"Commits: "
+            f"{real_stats['commits']}"
+        )
+
+        print(
+            f"Stars: "
+            f"{real_stats['stars']}"
+        )
+
+        print(
+            f"Lines: "
+            f"{real_stats['lines']}"
+        )
+
+        save_stats(
+            real_stats
+        )
+
+        return real_stats
+
+    except Exception as error:
+
+        print(
+            "================================"
+        )
+
+        print(
+            "FALHA AO COLETAR ESTATÍSTICAS"
+        )
+
+        print(
+            f"Erro: {error}"
+        )
+
+        print(
+            "================================"
+        )
+
+        print(
+            "Mantendo as últimas "
+            "estatísticas válidas."
+        )
+
+        return previous_stats
 
 
 def ascii_avatar():
-    path = ASSETS / "avatar.jpg"
+    path = (
+        ASSETS / "avatar.jpg"
+    )
 
     if not path.exists():
         return [
@@ -353,10 +579,16 @@ def ascii_avatar():
 
     lines = []
 
-    for y in range(image.height):
+    for y in range(
+        image.height
+    ):
+
         line = ""
 
-        for x in range(image.width):
+        for x in range(
+            image.width
+        ):
+
             value = image.getpixel(
                 (x, y)
             )
@@ -364,10 +596,15 @@ def ascii_avatar():
             index = int(
                 value
                 / 255
-                * (len(ASCII_CHARS) - 1)
+                * (
+                    len(ASCII_CHARS)
+                    - 1
+                )
             )
 
-            line += ASCII_CHARS[index]
+            line += (
+                ASCII_CHARS[index]
+            )
 
         lines.append(
             line.rstrip()
@@ -379,13 +616,25 @@ def ascii_avatar():
 def esc(value):
     return (
         str(value)
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
+        .replace(
+            "&",
+            "&amp;",
+        )
+        .replace(
+            "<",
+            "&lt;",
+        )
+        .replace(
+            ">",
+            "&gt;",
+        )
     )
 
 
-def build_svg(dark, stats):
+def build_svg(
+    dark,
+    stats,
+):
     bg = (
         "#0b0f14"
         if dark
@@ -472,7 +721,9 @@ def build_svg(dark, stats):
         f"de Eng. de Software (4 anos)"
     )
 
-    avatar_lines = ascii_avatar()
+    avatar_lines = (
+        ascii_avatar()
+    )
 
     max_line_length = (
         max(
@@ -488,7 +739,9 @@ def build_svg(dark, stats):
     )
 
     font_size = 3.5
+
     line_height = 3.5
+
     char_width = (
         font_size * 0.6
     )
@@ -753,6 +1006,7 @@ def build_svg(dark, stats):
     current_y = text_y
 
     for line in avatar_lines:
+
         lines.append(
             (
                 '<text '
@@ -806,6 +1060,7 @@ def build_svg(dark, stats):
     ]
 
     for label, value, x in stats_rows:
+
         lines.extend(
             [
                 (
@@ -818,6 +1073,7 @@ def build_svg(dark, stats):
                     f'{label}'
                     '</text>'
                 ),
+
                 (
                     '<text '
                     f'x="{x}" '
@@ -861,7 +1117,11 @@ def main():
     stats = get_stats()
 
     print(
-        "Estatísticas coletadas:"
+        "================================"
+    )
+
+    print(
+        "ESTATÍSTICAS FINAIS"
     )
 
     print(
@@ -882,6 +1142,10 @@ def main():
     print(
         f"Lines: "
         f"{stats['lines']}"
+    )
+
+    print(
+        "================================"
     )
 
     dark_svg = build_svg(

@@ -3,6 +3,7 @@ name: Update profile
 on:
   schedule:
     - cron: "0 0 */14 * *"
+
   workflow_dispatch:
 
 permissions:
@@ -30,6 +31,7 @@ jobs:
       - name: Check GitHub token
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         run: |
           if [ -z "$GITHUB_TOKEN" ]; then
             echo "GITHUB_TOKEN não está definido."
@@ -37,27 +39,33 @@ jobs:
           fi
 
           echo "GITHUB_TOKEN está definido."
-          echo "Token length: ${#GITHUB_TOKEN}"
 
       - name: Generate profile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: brunoMyguelDotCom
+
         run: |
           python generate.py
 
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add assets/dark_mode.svg assets/light_mode.svg
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            assets/dark_mode.svg \
+            assets/light_mode.svg \
+            assets/stats.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "chore: update profile stats"
+          git commit \
+            -m "chore: update profile stats"
 
           git push --force origin main

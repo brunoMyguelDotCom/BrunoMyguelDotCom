@@ -24,7 +24,8 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
 
       - name: Check GitHub token
         env:
@@ -42,7 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: brunoMyguelDotCom
-        run: python generate.py
+        run: |
+          python generate.py
 
       - name: Commit changes
         run: |

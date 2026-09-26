@@ -192,7 +192,8 @@ def build_svg(dark):
     try:
         stats = get_stats()
 
-    except Exception:
+    except Exception as e:
+        print(f"Erro ao coletar estatísticas: {e}")
         stats = {
             "repos": "n/a",
             "lines": "n/a",

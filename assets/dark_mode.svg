@@ -7,18 +7,18 @@
 <text x="52" y="133" fill="#d7dee7" font-family="monospace" font-size="16">ENGENHARIA DE SOFTWARE &amp; ENGENHARIA DE DADOS</text>
 <line x1="52" y1="158" x2="1048" y2="158" stroke="#26313d"/>
 <text x="52" y="190" fill="#7f8b99" font-family="monospace" font-size="14">profile</text>
-<text x='52' y='218' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Cargo:</text>
-<text x='120' y='218' fill='#d7dee7' font-family='monospace' font-size='16'>Estagiário de Engenharia de Dados na Crefaz</text>
-<text x='52' y='246' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Stack:</text>
-<text x='120' y='246' fill='#d7dee7' font-family='monospace' font-size='16'>Python · Pandas · PySpark | Java · Spring</text>
-<text x='52' y='274' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Infra:</text>
-<text x='120' y='274' fill='#d7dee7' font-family='monospace' font-size='16'>AWS · Terraform · PostgreSQL · ClickHouse</text>
-<text x='52' y='302' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Sistemas:</text>
-<text x='144' y='302' fill='#d7dee7' font-family='monospace' font-size='16'>Linux · macOS · Windows</text>
-<text x='52' y='340' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Experiência:</text>
-<text x='174' y='340' fill='#d7dee7' font-family='monospace' font-size='16'>8 anos e 6 meses de experiência na área da informática</text>
-<text x='52' y='368' fill='#d7dee7' font-family='monospace' font-size='16' font-weight='700'>Formação:</text>
-<text x='150' y='368' fill='#d7dee7' font-family='monospace' font-size='16'>1 anos e 7 meses de bacharelado de Eng. de Software (4 anos)</text>
+<text x="52" y="218" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Cargo:</text>
+<text x="120" y="218" fill="#d7dee7" font-family="monospace" font-size="16">Estagiário de Engenharia de Dados na Crefaz</text>
+<text x="52" y="246" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Stack:</text>
+<text x="120" y="246" fill="#d7dee7" font-family="monospace" font-size="16">Python · Pandas · PySpark | Java · Spring</text>
+<text x="52" y="274" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Infra:</text>
+<text x="120" y="274" fill="#d7dee7" font-family="monospace" font-size="16">AWS · Terraform · PostgreSQL · ClickHouse</text>
+<text x="52" y="302" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Sistemas:</text>
+<text x="144" y="302" fill="#d7dee7" font-family="monospace" font-size="16">Linux · macOS · Windows</text>
+<text x="52" y="340" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Experiência:</text>
+<text x="174" y="340" fill="#d7dee7" font-family="monospace" font-size="16">8 anos e 6 meses de experiência na área da informática</text>
+<text x="52" y="368" fill="#d7dee7" font-family="monospace" font-size="16" font-weight="700">Formação:</text>
+<text x="150" y="368" fill="#d7dee7" font-family="monospace" font-size="16">1 anos e 7 meses de bacharelado de Eng. de Software (4 anos)</text>
 <text x="730" y="196" fill="#d7dee7" font-family="monospace" font-size="3.5" xml:space="preserve">                                                                                                                               .</text>
 <text x="730" y="199.5" fill="#d7dee7" font-family="monospace" font-size="3.5" xml:space="preserve">                                                                                                                           . .: .</text>
 <text x="730" y="203.0" fill="#d7dee7" font-family="monospace" font-size="3.5" xml:space="preserve">                                                                                                                            ..#: .</text>
@@ -91,12 +91,12 @@
 <text x="730" y="437.5" fill="#d7dee7" font-family="monospace" font-size="3.5" xml:space="preserve">                                                                                                          .......               ......</text>
 <text x="52" y="456" fill="#7f8b99" font-family="monospace" font-size="14">github stats:</text>
 <text x="52" y="487" fill="#7f8b99" font-family="monospace" font-size="13">repositories</text>
-<text x="52" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">n/a</text>
+<text x="52" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">34</text>
 <text x="280" y="487" fill="#7f8b99" font-family="monospace" font-size="13">commits</text>
-<text x="280" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">n/a</text>
+<text x="280" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">391</text>
 <text x="510" y="487" fill="#7f8b99" font-family="monospace" font-size="13">stars</text>
-<text x="510" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">n/a</text>
+<text x="510" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">23</text>
 <text x="740" y="487" fill="#7f8b99" font-family="monospace" font-size="13">lines of code</text>
-<text x="740" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">n/a</text>
+<text x="740" y="520" fill="#8ab4f8" font-family="monospace" font-size="25" font-weight="700">61521</text>
 <text x="52" y="550" fill="#7f8b99" font-family="monospace" font-size="14" font-style="italic">onde o código toca o metal.</text>
 </svg>

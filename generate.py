@@ -127,7 +127,7 @@ def get_stats():
         pass
 
     return {
-        "repos": user.get("public_repos", 0) + 20,
+        "repos": user.get("public_repos", 0) + 20,  # compensação para os privados
         "lines": total_lines,
         "stars": stars,
         "commits": commits,

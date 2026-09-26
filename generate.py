@@ -19,7 +19,10 @@ USERNAME = os.getenv(
     "brunoMyguelDotCom",
 )
 
-TOKEN = os.getenv("GITHUB_TOKEN", "")
+TOKEN = os.getenv(
+    "GITHUB_TOKEN",
+    "",
+)
 
 NAME = "Bruno Myguel"
 TITLE = "ENGENHARIA DE SOFTWARE & ENGENHARIA DE DADOS"
@@ -73,8 +76,10 @@ IGNORE_FOLDERS = {
 }
 
 
-# Valores usados somente quando ainda não existe
-# nenhum valor real salvo anteriormente.
+# ============================================================
+# DEFAULTS
+# ============================================================
+
 DEFAULT_STATS = {
     "repos": 32,
     "commits": 0,
@@ -82,6 +87,10 @@ DEFAULT_STATS = {
     "lines": 8274,
 }
 
+
+# ============================================================
+# GITHUB SESSION
+# ============================================================
 
 session = requests.Session()
 
@@ -92,20 +101,92 @@ session.headers.update(
     }
 )
 
-
 if TOKEN:
-    session.headers["Authorization"] = (
-        f"Bearer {TOKEN}"
-    )
+    session.headers["Authorization"] = f"Bearer {TOKEN}"
 else:
-    print(
-        "AVISO: GITHUB_TOKEN não foi encontrado."
-    )
+    print("AVISO: GITHUB_TOKEN não foi encontrado.")
 
+
+# ============================================================
+# HELPERS
+# ============================================================
+
+def safe_int(value, fallback):
+    """
+    Garante que o valor utilizado no SVG seja sempre inteiro.
+    Nunca permite None, N/A, strings inválidas etc.
+    """
+
+    if isinstance(value, bool):
+        return fallback
+
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, float):
+        return int(value)
+
+    if isinstance(value, str):
+        value = value.strip()
+
+        if not value:
+            return fallback
+
+        if value.lower() in {
+            "n/a",
+            "na",
+            "none",
+            "null",
+            "undefined",
+        }:
+            return fallback
+
+        try:
+            return int(value)
+        except ValueError:
+            return fallback
+
+    return fallback
+
+
+def normalize_stats(stats):
+    """
+    Normaliza as estatísticas para garantir que o SVG
+    nunca receba valores inválidos.
+    """
+
+    if not isinstance(stats, dict):
+        return DEFAULT_STATS.copy()
+
+    return {
+        "repos": safe_int(
+            stats.get("repos"),
+            DEFAULT_STATS["repos"],
+        ),
+        "commits": safe_int(
+            stats.get("commits"),
+            DEFAULT_STATS["commits"],
+        ),
+        "stars": safe_int(
+            stats.get("stars"),
+            DEFAULT_STATS["stars"],
+        ),
+        "lines": safe_int(
+            stats.get("lines"),
+            DEFAULT_STATS["lines"],
+        ),
+    }
+
+
+# ============================================================
+# GITHUB API
+# ============================================================
 
 def github(path):
+    url = "https://api.github.com" + path
+
     response = session.get(
-        "https://api.github.com" + path,
+        url,
         timeout=30,
     )
 
@@ -120,7 +201,7 @@ def github(path):
         )
 
         print(
-            f"Response: "
+            "Response: "
             f"{response.text[:1000]}"
         )
 
@@ -129,15 +210,26 @@ def github(path):
     return response.json()
 
 
+# ============================================================
+# SAVED STATS
+# ============================================================
+
 def load_saved_stats():
     """
-    Carrega o último conjunto de estatísticas
-    que conseguiu ser obtido com sucesso.
+    Carrega as últimas estatísticas válidas.
+
+    Prioridade:
+    1. stats.json válido
+    2. valores padrão
     """
 
     if not STATS_FILE.exists():
         print(
             "stats.json não existe."
+        )
+
+        print(
+            "Usando valores padrão."
         )
 
         return DEFAULT_STATS.copy()
@@ -149,18 +241,7 @@ def load_saved_stats():
 
         saved = json.loads(content)
 
-        stats = {}
-
-        for key, default in DEFAULT_STATS.items():
-            value = saved.get(
-                key,
-                default,
-            )
-
-            if isinstance(value, int):
-                stats[key] = value
-            else:
-                stats[key] = default
+        stats = normalize_stats(saved)
 
         print(
             "Últimas estatísticas salvas:"
@@ -211,9 +292,10 @@ def load_saved_stats():
 
 def save_stats(stats):
     """
-    Salva somente quando uma coleta real
-    foi concluída com sucesso.
+    Salva somente estatísticas já validadas.
     """
+
+    stats = normalize_stats(stats)
 
     STATS_FILE.parent.mkdir(
         exist_ok=True
@@ -234,11 +316,17 @@ def save_stats(stats):
     )
 
 
+# ============================================================
+# REPOSITORIES
+# ============================================================
+
 def get_repositories():
     repositories = []
+
     page = 1
 
     while True:
+
         batch = github(
             f"/users/{USERNAME}/repos"
             f"?per_page=100"
@@ -246,6 +334,12 @@ def get_repositories():
             f"&type=owner"
             f"&sort=updated"
         )
+
+        if not isinstance(batch, list):
+            raise RuntimeError(
+                "Resposta inválida ao buscar "
+                "repositórios."
+            )
 
         repositories.extend(batch)
 
@@ -257,19 +351,21 @@ def get_repositories():
     return repositories
 
 
+# ============================================================
+# COUNT LINES
+# ============================================================
+
 def count_lines_in_repository(
     repo,
     temp_root,
 ):
     repo_name = repo["name"]
-
     clone_url = repo["clone_url"]
 
-    repo_path = (
-        temp_root / repo_name
-    )
+    repo_path = temp_root / repo_name
 
     try:
+
         print(
             f"Clonando {repo_name}..."
         )
@@ -291,13 +387,20 @@ def count_lines_in_repository(
         )
 
         if result.returncode != 0:
+
             print(
                 f"Erro ao clonar "
                 f"{repo_name}: "
                 f"{result.stderr.strip()}"
             )
 
-            return 0
+            # IMPORTANTE:
+            # Falha de clone agora é considerada
+            # falha da coleta inteira.
+            raise RuntimeError(
+                f"Falha ao clonar "
+                f"o repositório {repo_name}"
+            )
 
         total_lines = 0
 
@@ -306,15 +409,11 @@ def count_lines_in_repository(
             if not path.is_file():
                 continue
 
-            relative_path = (
-                path.relative_to(
-                    repo_path
-                )
+            relative_path = path.relative_to(
+                repo_path
             )
 
-            parts = (
-                relative_path.parts
-            )
+            parts = relative_path.parts
 
             if any(
                 folder in IGNORE_FOLDERS
@@ -329,6 +428,7 @@ def count_lines_in_repository(
                 continue
 
             try:
+
                 content = path.read_text(
                     encoding="utf-8",
                     errors="ignore",
@@ -342,6 +442,7 @@ def count_lines_in_repository(
                 OSError,
                 UnicodeError,
             ):
+
                 continue
 
         print(
@@ -352,23 +453,30 @@ def count_lines_in_repository(
         return total_lines
 
     except subprocess.TimeoutExpired:
+
         print(
             f"Timeout ao clonar "
             f"{repo_name}"
         )
 
-        return 0
+        raise RuntimeError(
+            f"Timeout ao clonar "
+            f"{repo_name}"
+        )
 
     except Exception as error:
+
         print(
             f"Erro ao processar "
             f"{repo_name}: {error}"
         )
 
-        return 0
+        raise
 
     finally:
+
         if repo_path.exists():
+
             shutil.rmtree(
                 repo_path,
                 ignore_errors=True,
@@ -376,6 +484,7 @@ def count_lines_in_repository(
 
 
 def count_all_lines(repos):
+
     total_lines = 0
 
     with tempfile.TemporaryDirectory(
@@ -396,7 +505,12 @@ def count_all_lines(repos):
     return total_lines
 
 
+# ============================================================
+# COMMITS
+# ============================================================
+
 def get_commit_count():
+
     response = session.get(
         "https://api.github.com/search/commits",
         params={
@@ -407,6 +521,7 @@ def get_commit_count():
     )
 
     if not response.ok:
+
         print(
             "Erro ao buscar commits:"
             f" {response.status_code}"
@@ -418,19 +533,34 @@ def get_commit_count():
 
         response.raise_for_status()
 
-    return response.json().get(
-        "total_count",
+    data = response.json()
+
+    total_count = data.get(
+        "total_count"
+    )
+
+    if total_count is None:
+        raise RuntimeError(
+            "GitHub não retornou "
+            "total_count dos commits."
+        )
+
+    return safe_int(
+        total_count,
         0,
     )
 
+
+# ============================================================
+# REAL STATS
+# ============================================================
 
 def collect_real_stats():
     """
     Faz a coleta completa.
 
     Se qualquer etapa crítica falhar,
-    a função lança uma exceção para que
-    o programa use os dados anteriores.
+    nenhuma estatística parcial é salva.
     """
 
     print(
@@ -438,10 +568,12 @@ def collect_real_stats():
         f"{USERNAME}..."
     )
 
+    # Verifica se o usuário existe
     github(
         f"/users/{USERNAME}"
     )
 
+    # Repositórios
     repos = get_repositories()
 
     print(
@@ -449,18 +581,24 @@ def collect_real_stats():
         f"{len(repos)}"
     )
 
+    # Stars
     stars = sum(
-        repo.get(
-            "stargazers_count",
+        safe_int(
+            repo.get(
+                "stargazers_count",
+                0,
+            ),
             0,
         )
         for repo in repos
     )
 
+    # Linhas
     total_lines = count_all_lines(
         repos
     )
 
+    # Commits
     commits = get_commit_count()
 
     stats = {
@@ -470,19 +608,25 @@ def collect_real_stats():
         "lines": total_lines,
     }
 
-    return stats
+    return normalize_stats(
+        stats
+    )
 
+
+# ============================================================
+# STATS WITH FALLBACK
+# ============================================================
 
 def get_stats():
     """
     Prioridade:
 
-    1. Estatísticas reais atuais.
-    2. Últimas estatísticas salvas.
-    3. Valores padrão.
+    1. Estatísticas reais atuais
+    2. Últimas estatísticas salvas
+    3. Valores padrão
 
-    O stats.json só é alterado quando
-    a coleta real termina com sucesso.
+    stats.json somente é alterado quando
+    a coleta real termina completamente.
     """
 
     previous_stats = (
@@ -490,8 +634,13 @@ def get_stats():
     )
 
     try:
+
         real_stats = (
             collect_real_stats()
+        )
+
+        real_stats = normalize_stats(
+            real_stats
         )
 
         print(
@@ -548,15 +697,45 @@ def get_stats():
             "estatísticas válidas."
         )
 
+        previous_stats = normalize_stats(
+            previous_stats
+        )
+
+        print(
+            f"Repositories: "
+            f"{previous_stats['repos']}"
+        )
+
+        print(
+            f"Commits: "
+            f"{previous_stats['commits']}"
+        )
+
+        print(
+            f"Stars: "
+            f"{previous_stats['stars']}"
+        )
+
+        print(
+            f"Lines: "
+            f"{previous_stats['lines']}"
+        )
+
         return previous_stats
 
 
+# ============================================================
+# ASCII AVATAR
+# ============================================================
+
 def ascii_avatar():
+
     path = (
         ASSETS / "avatar.jpg"
     )
 
     if not path.exists():
+
         return [
             "   +----------------+",
             "   |                |",
@@ -602,9 +781,9 @@ def ascii_avatar():
                 )
             )
 
-            line += (
-                ASCII_CHARS[index]
-            )
+            line += ASCII_CHARS[
+                index
+            ]
 
         lines.append(
             line.rstrip()
@@ -613,7 +792,12 @@ def ascii_avatar():
     return lines
 
 
+# ============================================================
+# SVG ESCAPE
+# ============================================================
+
 def esc(value):
+
     return (
         str(value)
         .replace(
@@ -631,10 +815,19 @@ def esc(value):
     )
 
 
+# ============================================================
+# SVG
+# ============================================================
+
 def build_svg(
     dark,
     stats,
 ):
+
+    stats = normalize_stats(
+        stats
+    )
+
     bg = (
         "#0b0f14"
         if dark
@@ -739,7 +932,6 @@ def build_svg(
     )
 
     font_size = 3.5
-
     line_height = 3.5
 
     char_width = (
@@ -828,7 +1020,7 @@ def build_svg(
             'font-family="monospace" '
             'font-size="30" '
             'font-weight="700">'
-            f'{NAME}'
+            f'{esc(NAME)}'
             '</text>'
         ),
 
@@ -1070,7 +1262,7 @@ def build_svg(
                     f'fill="{muted}" '
                     'font-family="monospace" '
                     'font-size="13">'
-                    f'{label}'
+                    f'{esc(label)}'
                     '</text>'
                 ),
 
@@ -1109,12 +1301,21 @@ def build_svg(
     return "\n".join(lines)
 
 
+# ============================================================
+# MAIN
+# ============================================================
+
 def main():
+
     ASSETS.mkdir(
         exist_ok=True
     )
 
     stats = get_stats()
+
+    stats = normalize_stats(
+        stats
+    )
 
     print(
         "================================"

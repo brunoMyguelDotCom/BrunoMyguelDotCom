@@ -46,7 +46,4 @@ jobs:
 
           git commit -m "chore: update profile stats"
 
-          git fetch origin main
-          git rebase origin/main
-
-          git push origin main
+          git push --force origin main

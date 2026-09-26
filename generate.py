@@ -67,6 +67,47 @@ def get_stats():
 
     stars = sum(repo.get("stargazers_count", 0) for repo in repos)
 
+    # Extensões de arquivos que queremos contar como código
+    CODE_EXTENSIONS = {
+        ".py", ".java", ".js", ".ts", ".tsx", ".jsx", ".html", ".css",
+        ".sql", ".sh", ".yml", ".yaml", ".json", ".cpp", ".c", ".cs",
+        ".go", ".rs", ".php", ".rb", ".swift", ".kt"
+    }
+    # Pastas que devem ser ignoradas
+    IGNORE_FOLDERS = {
+        "node_modules", ".git", "venv", ".venv", "__pycache__",
+        "dist", "build", "target", ".idea", ".vscode"
+    }
+
+    total_lines = 0
+    for repo in repos:
+        repo_name = repo["name"]
+        try:
+            # Tenta buscar a árvore recursiva da branch padrão
+            default_branch = repo.get("default_branch", "main")
+            tree = github(f"/repos/{USERNAME}/{repo_name}/git/trees/{default_branch}?recursive=1")
+
+            for item in tree.get("tree", []):
+                if item["type"] == "blob":
+                    path = item["path"]
+                    # Ignora arquivos em pastas proibidas
+                    if any(folder in path.split("/") for folder in IGNORE_FOLDERS):
+                        continue
+
+                    # Ignora arquivos que não tenham as extensões de código
+                    if not any(path.endswith(ext) for ext in CODE_EXTENSIONS):
+                        continue
+
+                    # Pega o conteúdo do arquivo para contar as linhas
+                    content_data = github(f"/repos/{USERNAME}/{repo_name}/contents/{path}")
+                    import base64
+                    encoded_content = content_data.get("content", "")
+                    if encoded_content:
+                        decoded_content = base64.b64decode(encoded_content).decode("utf-8", errors="ignore")
+                        total_lines += len(decoded_content.splitlines())
+        except Exception:
+            continue
+
     commits = "n/a"
 
     try:
@@ -87,7 +128,7 @@ def get_stats():
 
     return {
         "repos": user.get("public_repos", 0),
-        "lines": "n/a",
+        "lines": total_lines,
         "stars": stars,
         "commits": commits,
     }

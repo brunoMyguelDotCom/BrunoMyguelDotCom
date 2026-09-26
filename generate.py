@@ -1,11 +1,9 @@
+import base64
 import os
 from datetime import datetime
-
-
 from pathlib import Path
 
 import requests
-
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent
@@ -17,6 +15,7 @@ TOKEN = os.getenv("GITHUB_TOKEN", "")
 NAME = "Bruno Myguel"
 TITLE = "ENGENHARIA DE SOFTWARE & ENGENHARIA DE DADOS"
 ROLE = "Estagiário de Engenharia de Dados na Crefaz"
+
 BACKEND = "Python · Pandas · PySpark"
 DATA = "Java · Spring"
 INFRA = "AWS · Terraform · PostgreSQL · ClickHouse"
@@ -36,17 +35,24 @@ session.headers.update(
 
 if TOKEN:
     session.headers["Authorization"] = f"Bearer {TOKEN}"
+else:
+    print("AVISO: GITHUB_TOKEN não foi encontrado.")
 
 
 def github(path):
-    r = session.get(
+    response = session.get(
         "https://api.github.com" + path,
         timeout=30,
     )
 
-    r.raise_for_status()
+    if not response.ok:
+        print(f"GitHub API error: {response.status_code}")
+        print(f"URL: {response.url}")
+        print(f"Response: {response.text[:1000]}")
 
-    return r.json()
+    response.raise_for_status()
+
+    return response.json()
 
 
 def get_stats():
@@ -56,7 +62,9 @@ def get_stats():
     page = 1
 
     while True:
-        batch = github(f"/users/{USERNAME}/repos?per_page=100&page={page}&type=owner")
+        batch = github(
+            f"/users/{USERNAME}/repos" f"?per_page=100" f"&page={page}" f"&type=owner"
+        )
 
         repos.extend(batch)
 
@@ -67,51 +75,104 @@ def get_stats():
 
     stars = sum(repo.get("stargazers_count", 0) for repo in repos)
 
-    # Extensões de arquivos que queremos contar como código
     CODE_EXTENSIONS = {
-        ".py", ".java", ".js", ".ts", ".tsx", ".jsx", ".html", ".css",
-        ".sql", ".sh", ".yml", ".yaml", ".json", ".cpp", ".c", ".cs",
-        ".go", ".rs", ".php", ".rb", ".swift", ".kt"
+        ".py",
+        ".java",
+        ".js",
+        ".ts",
+        ".tsx",
+        ".jsx",
+        ".html",
+        ".css",
+        ".sql",
+        ".sh",
+        ".yml",
+        ".yaml",
+        ".json",
+        ".cpp",
+        ".c",
+        ".cs",
+        ".go",
+        ".rs",
+        ".php",
+        ".rb",
+        ".swift",
+        ".kt",
     }
-    # Pastas que devem ser ignoradas
+
     IGNORE_FOLDERS = {
-        "node_modules", ".git", "venv", ".venv", "__pycache__",
-        "dist", "build", "target", ".idea", ".vscode"
+        "node_modules",
+        ".git",
+        "venv",
+        ".venv",
+        "__pycache__",
+        "dist",
+        "build",
+        "target",
+        ".idea",
+        ".vscode",
     }
 
     total_lines = 0
+
     for repo in repos:
         repo_name = repo["name"]
+
         try:
-            # Tenta buscar a árvore recursiva da branch padrão
-            default_branch = repo.get("default_branch", "main")
-            tree = github(f"/repos/{USERNAME}/{repo_name}/git/trees/{default_branch}?recursive=1")
+            default_branch = repo.get(
+                "default_branch",
+                "main",
+            )
+
+            tree = github(
+                f"/repos/{USERNAME}/{repo_name}"
+                f"/git/trees/{default_branch}?recursive=1"
+            )
 
             for item in tree.get("tree", []):
-                if item["type"] == "blob":
-                    path = item["path"]
-                    # Ignora arquivos em pastas proibidas
-                    if any(folder in path.split("/") for folder in IGNORE_FOLDERS):
+                if item["type"] != "blob":
+                    continue
+
+                path = item["path"]
+
+                if any(folder in path.split("/") for folder in IGNORE_FOLDERS):
+                    continue
+
+                if not any(path.endswith(ext) for ext in CODE_EXTENSIONS):
+                    continue
+
+                try:
+                    content_data = github(
+                        f"/repos/{USERNAME}/{repo_name}" f"/contents/{path}"
+                    )
+
+                    encoded_content = content_data.get(
+                        "content",
+                        "",
+                    )
+
+                    if not encoded_content:
                         continue
 
-                    # Ignora arquivos que não tenham as extensões de código
-                    if not any(path.endswith(ext) for ext in CODE_EXTENSIONS):
-                        continue
+                    decoded_content = base64.b64decode(encoded_content).decode(
+                        "utf-8",
+                        errors="ignore",
+                    )
 
-                    # Pega o conteúdo do arquivo para contar as linhas
-                    content_data = github(f"/repos/{USERNAME}/{repo_name}/contents/{path}")
-                    import base64
-                    encoded_content = content_data.get("content", "")
-                    if encoded_content:
-                        decoded_content = base64.b64decode(encoded_content).decode("utf-8", errors="ignore")
-                        total_lines += len(decoded_content.splitlines())
-        except Exception:
+                    total_lines += len(decoded_content.splitlines())
+
+                except Exception as error:
+                    print(f"Erro ao ler {repo_name}/{path}: " f"{error}")
+
+        except Exception as error:
+            print(f"Erro ao processar repositório " f"{repo_name}: {error}")
+
             continue
 
     commits = "n/a"
 
     try:
-        r = session.get(
+        response = session.get(
             "https://api.github.com/search/commits",
             params={
                 "q": f"author:{USERNAME}",
@@ -120,14 +181,20 @@ def get_stats():
             timeout=30,
         )
 
-        if r.ok:
-            commits = r.json().get("total_count", 0)
+        if response.ok:
+            commits = response.json().get(
+                "total_count",
+                0,
+            )
+        else:
+            print(f"Erro ao buscar commits: " f"{response.status_code}")
+            print(response.text[:1000])
 
-    except requests.RequestException:
-        pass
+    except requests.RequestException as error:
+        print(f"Erro ao buscar commits: {error}")
 
     return {
-        "repos": user.get("public_repos", 0) + 20,  # compensação para os privados
+        "repos": len(repos),
         "lines": total_lines,
         "stars": stars,
         "commits": commits,
@@ -148,12 +215,8 @@ def ascii_avatar():
             "   +----------------+",
         ]
 
-    # Converte a imagem para escala de cinza.
-    # Isso gera um único valor de luminosidade por pixel.
     image = Image.open(path).convert("L")
 
-    # Caracteres de terminal são mais altos que largos.
-    # Reduzimos a altura para evitar que o rosto fique esticado.
     image = ImageOps.fit(
         image,
         (160, 70),
@@ -192,8 +255,9 @@ def build_svg(dark):
     try:
         stats = get_stats()
 
-    except Exception as e:
-        print(f"Erro ao coletar estatísticas: {e}")
+    except Exception as error:
+        print(f"Erro ao coletar estatísticas: {error}")
+
         stats = {
             "repos": "n/a",
             "lines": "n/a",
@@ -201,28 +265,35 @@ def build_svg(dark):
             "commits": "n/a",
         }
 
-    # Cálculo de experiência e bacharelado
-    # Definido para resultar em 8 anos e 5 meses em Setembro de 2026
     start_it = datetime(2018, 4, 1)
-    # Bacharelado começou em Fevereiro de 2025
     start_deg = datetime(2025, 2, 1)
+
     now = datetime.now()
 
     diff_it = now - start_it
+
     years_it = diff_it.days // 365
     months_it = (diff_it.days % 365) // 30
 
     diff_deg = now - start_deg
+
     years_deg = diff_deg.days // 365
     months_deg = (diff_deg.days % 365) // 30
 
-    it_text = f"{years_it} anos e {months_it} meses de experiência na área da informática"
-    deg_text = f"{years_deg} anos e {months_deg} meses de bacharelado de Eng. de Software (4 anos)"
+    it_text = (
+        f"{years_it} anos e "
+        f"{months_it} meses de experiência "
+        f"na área da informática"
+    )
+
+    deg_text = (
+        f"{years_deg} anos e "
+        f"{months_deg} meses de bacharelado "
+        f"de Eng. de Software (4 anos)"
+    )
 
     avatar_lines = ascii_avatar()
 
-
-    # Cálculo dinâmico do tamanho do avatar
     max_line_length = max(len(line) for line in avatar_lines) if avatar_lines else 0
 
     num_lines = len(avatar_lines)
@@ -232,11 +303,13 @@ def build_svg(dark):
     char_width = font_size * 0.6
 
     avatar_width_px = max_line_length * char_width
+
     avatar_height_px = num_lines * line_height
 
     padding = 20
 
     box_width = avatar_width_px + (padding * 2)
+
     box_height = avatar_height_px + (padding * 2)
 
     box_x = 710
@@ -247,102 +320,231 @@ def build_svg(dark):
 
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        "<svg "
-        'xmlns="http://www.w3.org/2000/svg" '
-        'width="1200" '
-        'height="590" '
-        'viewBox="0 0 1100 590">',
-        f"<rect " f'width="1100" ' f'height="590" ' f'rx="18" ' f'fill="{bg}"/>',
-        f"<rect "
-        f'x="24" '
-        f'y="24" '
-        f'width="1052" '
-        f'height="542" '
-        f'rx="12" '
-        f'fill="{panel}" '
-        f'stroke="{border}"/>',
-        f"<text "
-        f'x="52" '
-        f'y="67" '
-        f'fill="{muted}" '
-        f'font-family="monospace" '
-        f'font-size="15">'
-        f"Bem vindo ao meu github!"
-        f"</text>",
-        f"<text "
-        f'x="52" '
-        f'y="104" '
-        f'fill="{accent}" '
-        f'font-family="monospace" '
-        f'font-size="30" '
-        f'font-weight="700">'
-        f"{NAME}"
-        f"</text>",
-        f"<text "
-        f'x="52" '
-        f'y="133" '
-        f'fill="{fg}" '
-        f'font-family="monospace" '
-        f'font-size="16">'
-        f"{esc(TITLE)}"
-        f"</text>",
-        f"<line "
-        f'x1="52" '
-        f'y1="158" '
-        f'x2="1048" '
-        f'y2="158" '
-        f'stroke="{border}"/>',
-        f"<text "
-        f'x="52" '
-        f'y="190" '
-        f'fill="{muted}" '
-        f'font-family="monospace" '
-        f'font-size="14">'
-        f"profile"
-        f"</text>",
-        f"<text x='52' y='218' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Cargo:</text>",
-        f"<text x='120' y='218' fill='{fg}' font-family='monospace' font-size='16'>{esc(ROLE)}</text>",
-        f"<text x='52' y='246' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Stack:</text>",
-        f"<text x='120' y='246' fill='{fg}' font-family='monospace' font-size='16'>{esc(BACKEND)} | {esc(DATA)}</text>",
-        f"<text x='52' y='274' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Infra:</text>",
-        f"<text x='120' y='274' fill='{fg}' font-family='monospace' font-size='16'>{esc(INFRA)}</text>",
-        f"<text x='52' y='302' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Sistemas:</text>",
-        f"<text x='144' y='302' fill='{fg}' font-family='monospace' font-size='16'>{esc(SYSTEMS)}</text>",
-        f"<text x='52' y='340' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Experiência:</text>",
-        f"<text x='174' y='340' fill='{fg}' font-family='monospace' font-size='16'>{esc(it_text)}</text>",
-        f"<text x='52' y='368' fill='{fg}' font-family='monospace' font-size='16' font-weight='700'>Formação:</text>",
-        f"<text x='150' y='368' fill='{fg}' font-family='monospace' font-size='16'>{esc(deg_text)}</text>",
-        # Caixa do avatar ASCII
-        # (Removido o bloco de fundo do avatar)
+        (
+            "<svg "
+            'xmlns="http://www.w3.org/2000/svg" '
+            'width="1200" '
+            'height="590" '
+            'viewBox="0 0 1100 590">'
+        ),
+        ("<rect " 'width="1100" ' 'height="590" ' 'rx="18" ' f'fill="{bg}"/>'),
+        (
+            "<rect "
+            'x="24" '
+            'y="24" '
+            'width="1052" '
+            'height="542" '
+            'rx="12" '
+            f'fill="{panel}" '
+            f'stroke="{border}"/>'
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="67" '
+            f'fill="{muted}" '
+            'font-family="monospace" '
+            'font-size="15">'
+            "Bem vindo ao meu github!"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="104" '
+            f'fill="{accent}" '
+            'font-family="monospace" '
+            'font-size="30" '
+            'font-weight="700">'
+            f"{NAME}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="133" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(TITLE)}"
+            "</text>"
+        ),
+        (
+            "<line "
+            'x1="52" '
+            'y1="158" '
+            'x2="1048" '
+            'y2="158" '
+            f'stroke="{border}"/>'
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="190" '
+            f'fill="{muted}" '
+            'font-family="monospace" '
+            'font-size="14">'
+            "profile"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="218" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Cargo:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="120" '
+            'y="218" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(ROLE)}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="246" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Stack:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="120" '
+            'y="246" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(BACKEND)} | {esc(DATA)}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="274" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Infra:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="120" '
+            'y="274" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(INFRA)}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="302" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Sistemas:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="144" '
+            'y="302" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(SYSTEMS)}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="340" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Experiência:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="174" '
+            'y="340" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(it_text)}"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="52" '
+            'y="368" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16" '
+            'font-weight="700">'
+            "Formação:"
+            "</text>"
+        ),
+        (
+            "<text "
+            'x="150" '
+            'y="368" '
+            f'fill="{fg}" '
+            'font-family="monospace" '
+            'font-size="16">'
+            f"{esc(deg_text)}"
+            "</text>"
+        ),
     ]
 
-    # Renderiza a imagem como ASCII dentro do SVG
     current_y = text_y
 
     for line in avatar_lines:
         lines.append(
-            f"<text "
-            f'x="{text_x}" '
-            f'y="{current_y}" '
-            f'fill="{fg}" '
-            f'font-family="monospace" '
-            f'font-size="{font_size}" '
-            f'xml:space="preserve">'
-            f"{esc(line)}"
-            f"</text>"
+            (
+                "<text "
+                f'x="{text_x}" '
+                f'y="{current_y}" '
+                f'fill="{fg}" '
+                'font-family="monospace" '
+                f'font-size="{font_size}" '
+                'xml:space="preserve">'
+                f"{esc(line)}"
+                "</text>"
+            )
         )
 
         current_y += line_height
 
     lines += [
-        f"<text "
-        f'x="52" '
-        f'y="456" '
-        f'fill="{muted}" '
-        f'font-family="monospace" '
-        f'font-size="14">'
-        f"github stats:"
-        f"</text>",
+        (
+            "<text "
+            'x="52" '
+            'y="456" '
+            f'fill="{muted}" '
+            'font-family="monospace" '
+            'font-size="14">'
+            "github stats:"
+            "</text>"
+        ),
     ]
 
     stats_rows = [
@@ -355,36 +557,42 @@ def build_svg(dark):
     for label, value, x in stats_rows:
         lines.extend(
             [
-                f"<text "
-                f'x="{x}" '
-                f'y="487" '
-                f'fill="{muted}" '
-                f'font-family="monospace" '
-                f'font-size="13">'
-                f"{label}"
-                f"</text>",
-                f"<text "
-                f'x="{x}" '
-                f'y="520" '
-                f'fill="{accent}" '
-                f'font-family="monospace" '
-                f'font-size="25" '
-                f'font-weight="700">'
-                f"{esc(value)}"
-                f"</text>",
+                (
+                    "<text "
+                    f'x="{x}" '
+                    'y="487" '
+                    f'fill="{muted}" '
+                    'font-family="monospace" '
+                    'font-size="13">'
+                    f"{label}"
+                    "</text>"
+                ),
+                (
+                    "<text "
+                    f'x="{x}" '
+                    'y="520" '
+                    f'fill="{accent}" '
+                    'font-family="monospace" '
+                    'font-size="25" '
+                    'font-weight="700">'
+                    f"{esc(value)}"
+                    "</text>"
+                ),
             ]
         )
 
     lines += [
-        f"<text "
-        f'x="52" '
-        f'y="550" '
-        f'fill="{muted}" '
-        f'font-family="monospace" '
-        f'font-size="14" '
-        f'font-style="italic">'
-        f"onde o código toca o metal."
-        f"</text>",
+        (
+            "<text "
+            'x="52" '
+            'y="550" '
+            f'fill="{muted}" '
+            'font-family="monospace" '
+            'font-size="14" '
+            'font-style="italic">'
+            "onde o código toca o metal."
+            "</text>"
+        ),
         "</svg>",
     ]
 

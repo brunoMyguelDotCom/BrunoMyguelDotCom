@@ -26,6 +26,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check GitHub token
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN não está definido."
+            exit 1
+          fi
+
+          echo "GITHUB_TOKEN está definido."
+          echo "Token length: ${#GITHUB_TOKEN}"
+
       - name: Generate profile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

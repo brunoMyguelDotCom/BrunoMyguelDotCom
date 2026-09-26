@@ -156,7 +156,7 @@ def ascii_avatar():
     # Reduzimos a altura para evitar que o rosto fique esticado.
     image = ImageOps.fit(
         image,
-        (140, 70),
+        (160, 70),
         method=Image.Resampling.LANCZOS,
     )
 
@@ -238,7 +238,7 @@ def build_svg(dark):
     box_width = avatar_width_px + (padding * 2)
     box_height = avatar_height_px + (padding * 2)
 
-    box_x = 730
+    box_x = 710
     box_y = 176
 
     text_x = box_x + padding
@@ -248,7 +248,7 @@ def build_svg(dark):
         '<?xml version="1.0" encoding="UTF-8"?>',
         "<svg "
         'xmlns="http://www.w3.org/2000/svg" '
-        'width="1100" '
+        'width="1200" '
         'height="590" '
         'viewBox="0 0 1100 590">',
         f"<rect " f'width="1100" ' f'height="590" ' f'rx="18" ' f'fill="{bg}"/>',

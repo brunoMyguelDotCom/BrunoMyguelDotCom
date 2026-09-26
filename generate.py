@@ -63,7 +63,7 @@ def get_stats():
 
     return {
         "repos": user.get("public_repos", 0),
-        "followers": user.get("followers", 0),
+        "lines": "n/a",
         "stars": stars,
         "commits": commits,
     }
@@ -124,7 +124,7 @@ def build_svg(dark):
     except Exception:
         stats = {
             "repos": "n/a",
-            "followers": "n/a",
+            "lines": "n/a",
             "stars": "n/a",
             "commits": "n/a",
         }
@@ -137,20 +137,20 @@ def build_svg(dark):
         f'<rect width="1100" height="590" rx="18" fill="{bg}"/>',
         f'<rect x="24" y="24" width="1052" height="542" rx="12" fill="{panel}" stroke="{border}"/>',
 
-        f'<text x="52" y="67" fill="{muted}" font-family="monospace" font-size="15">brunoMyguelDotCom@github:~$ whoami</text>',
+        f'<text x="52" y="67" fill="{muted}" font-family="monospace" font-size="15">System initialized. Welcome, {NAME}.</text>',
         f'<text x="52" y="104" fill="{accent}" font-family="monospace" font-size="30" font-weight="700">{NAME}</text>',
         f'<text x="52" y="133" fill="{fg}" font-family="monospace" font-size="16">{esc(TITLE)}</text>',
         f'<line x1="52" y1="158" x2="1048" y2="158" stroke="{border}"/>',
 
         f'<text x="52" y="190" fill="{muted}" font-family="monospace" font-size="14">profile</text>',
-        f'<text x="52" y="218" fill="{fg}" font-family="monospace" font-size="16">role       {esc(ROLE)}</text>',
-        f'<text x="52" y="246" fill="{fg}" font-family="monospace" font-size="16">backend    {esc(BACKEND)}</text>',
-        f'<text x="52" y="274" fill="{fg}" font-family="monospace" font-size="16">infra      {esc(INFRA)}</text>',
-        f'<text x="52" y="302" fill="{fg}" font-family="monospace" font-size="16">systems    {esc(SYSTEMS)}</text>',
-        f'<text x="52" y="330" fill="{fg}" font-family="monospace" font-size="16">focus      resolução de problemas</text>',
-        f'<text x="52" y="358" fill="{fg}" font-family="monospace" font-size="16">hardware   8 anos em assistência técnica</text>',
-        f'<text x="52" y="386" fill="{fg}" font-family="monospace" font-size="16">formação   Engenharia de Software — UniCV</text>',
-        f'<text x="52" y="414" fill="{fg}" font-family="monospace" font-size="16">           Desenvolvimento Backend &amp; Sistemas Linux — Alura</text>',
+        f'<text x="52" y="218" fill="{fg}" font-family="monospace" font-size="16">experiência   {esc(ROLE)}</text>',
+        f'<text x="52" y="246" fill="{fg}" font-family="monospace" font-size="16">stack        {esc(BACKEND)}</text>',
+        f'<text x="52" y="274" fill="{fg}" font-family="monospace" font-size="16">infra        {esc(INFRA)}</text>',
+        f'<text x="52" y="302" fill="{fg}" font-family="monospace" font-size="16">sistemas    {esc(SYSTEMS)}</text>',
+        f'<text x="52" y="330" fill="{fg}" font-family="monospace" font-size="16">especialidade  resolução de problemas complexos</text>',
+        f'<text x="52" y="358" fill="{fg}" font-family="monospace" font-size="16">histórico    8 anos em assistência técnica de hardware</text>',
+        f'<text x="52" y="386" fill="{fg}" font-family="monospace" font-size="16">formação    Engenharia de Software — UniCV</text>',
+        f'<text x="52" y="414" fill="{fg}" font-family="monospace" font-size="16">            Certificações em Backend &amp; Sistemas Linux — Alura</text>',
 
         f'<rect x="850" y="176" width="196" height="250" rx="8" fill="{bg}" stroke="{border}"/>',
         f'<text x="866" y="198" fill="{muted}" font-family="monospace" font-size="11">avatar</text>',
@@ -171,7 +171,7 @@ def build_svg(dark):
         ("repositories", stats["repos"], 52),
         ("commits", stats["commits"], 280),
         ("stars", stats["stars"], 510),
-        ("followers", stats["followers"], 740),
+        ("lines of code", stats["lines"], 740),
     ]
 
     for label, value, x in stats_rows:

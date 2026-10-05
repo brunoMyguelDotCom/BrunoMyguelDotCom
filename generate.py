@@ -797,7 +797,6 @@ def ascii_avatar():
 # ============================================================
 
 def esc(value):
-
     return (
         str(value)
         .replace(
@@ -813,6 +812,14 @@ def esc(value):
             "&gt;",
         )
     )
+
+
+def format_number(value):
+    """Formata números com separador de milhar (ponto)."""
+    try:
+        return f"{int(value):,}".replace(",", ".")
+    except (ValueError, TypeError):
+        return str(value)
 
 
 # ============================================================
@@ -1274,7 +1281,7 @@ def build_svg(
                     'font-family="monospace" '
                     'font-size="25" '
                     'font-weight="700">'
-                    f'{esc(value)}'
+                    f'{esc(format_number(value))}'
                     '</text>'
                 ),
             ]
